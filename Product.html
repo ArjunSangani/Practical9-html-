@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Electronics Store</a>
+        <span class="text-white">Cart: <span id="cartCount">0</span></span>
+    </div>
+</nav>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Our Products</h2>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <img src="laptop.jpg"
+                     class="card-img-top" alt="Laptop">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Laptop</h5>
+                    <p class="text-success fw-bold">₹45,000</p>
+                    <button class="btn btn-primary"
+                        onclick="addToCart('Laptop',45000)">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <img src="smartphone.jpg"
+                     class="card-img-top" alt="Smartphone">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Smartphone</h5>
+                    <p class="text-success fw-bold">₹15,000</p>
+                    <button class="btn btn-primary"
+                        onclick="addToCart('Smartphone',15000)">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <img src="headphone.jpg"
+                     class="card-img-top" alt="Headphones">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Headphones</h5>
+                    <p class="text-success fw-bold">₹2,000</p>
+                    <button class="btn btn-primary"
+                        onclick="addToCart('Headphones',2000)">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mt-5">
+        <div class="card-body">
+            <h3 class="mb-3">Shopping Cart</h3>
+
+            <ul id="cartItems" class="list-group mb-3">
+                <li class="list-group-item">Your cart is empty.</li>
+            </ul>
+
+            <h5>Total: ₹<span id="total">0</span></h5>
+            <button class="btn btn-success mt-2"
+                onclick="showCheckout()">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4 d-none" id="checkout">
+        <div class="card-body">
+            <h3 class="mb-3">Checkout Form</h3>
+
+            <form onsubmit="return placeOrder()">
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control"
+                        id="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control"
+                        id="email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-control" id="address"
+                        rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Payment Method</label>
+                    <select class="form-select" id="payment" required>
+                        <option value="">Select Payment</option>
+                        <option>Cash on Delivery</option>
+                        <option>UPI</option>
+                        <option>Credit/Debit Card</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+
+    function addToCart(name, price) {
+        cart.push({name: name, price: price});
+        updateCart();
+    }
+
+    function updateCart() {
+        document.getElementById("cartCount").textContent = cart.length;
+
+        let items = document.getElementById("cartItems");
+        items.innerHTML = "";
+        let total = 0;
+
+        if (cart.length === 0) {
+            items.innerHTML =
+                '<li class="list-group-item">Your cart is empty.</li>';
+        }
+
+        cart.forEach(function(item, index) {
+            total += item.price;
+
+            items.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between">
+                    ${item.name} - ₹${item.price}
+                    <button class="btn btn-danger btn-sm"
+                        onclick="removeItem(${index})">
+                        Remove
+                    </button>
+                </li>`;
+        });
+
+        document.getElementById("total").textContent = total;
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    function showCheckout() {
+        if (cart.length === 0) {
+            alert("Please add a product to your cart first.");
+            return;
+        }
+
+        document.getElementById("checkout").classList.remove("d-none");
+        document.getElementById("checkout").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+
+    function placeOrder() {
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return false;
+        }
+
+        let name = document.getElementById("name").value;
+        let total = document.getElementById("total").textContent;
+
+        alert("Thank you, " + name +
+              "! Your order has been placed. Total: ₹" + total);
+
+        cart = [];
+        updateCart();
+        document.querySelector("form").reset();
+        document.getElementById("checkout").classList.add("d-none");
+
+        return false;
+    }
+</script>
+
+</body>
+</html>
+
